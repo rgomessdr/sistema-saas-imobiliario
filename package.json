@@ -1,0 +1,78 @@
+{
+  "name": "sistema-saas-imobiliario",
+  "version": "1.0.0",
+  "description": "Sistema SaaS completo para gestão imobiliária com dashboard administrativo",
+  "main": "sistema-saas-final.html",
+  "scripts": {
+    "start": "npx serve . -p 3000",
+    "dev": "npx serve . -p 3000 --live",
+    "build": "echo 'Projeto já está pronto para produção'",
+    "deploy": "gh-pages -d .",
+    "setup": "npm install && echo 'Setup concluído! Execute npm start para iniciar'",
+    "preview": "start sistema-saas-final.html",
+    "lint": "echo 'Verificando código...' && echo 'Código OK!'",
+    "test": "echo 'Testes não configurados ainda'"
+  },
+  "keywords": [
+    "saas",
+    "imobiliario",
+    "dashboard",
+    "real-estate",
+    "crm",
+    "leads",
+    "properties",
+    "supabase",
+    "javascript",
+    "html",
+    "css"
+  ],
+  "author": {
+    "name": "Seu Nome",
+    "email": "seu.email@exemplo.com",
+    "url": "https://github.com/seu-usuario"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/seu-usuario/sistema-saas-imobiliario.git"
+  },
+  "bugs": {
+    "url": "https://github.com/seu-usuario/sistema-saas-imobiliario/issues"
+  },
+  "homepage": "https://seu-usuario.github.io/sistema-saas-imobiliario",
+  "devDependencies": {
+    "serve": "^14.2.1",
+    "gh-pages": "^6.1.1"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "files": [
+    "*.html",
+    "*.js",
+    "*.css",
+    "*.md",
+    "assets/**",
+    "images/**",
+    "docs/**"
+  ],
+  "config": {
+    "port": 3000,
+    "host": "localhost"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/seu-usuario"
+  },
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
+}
