@@ -3,8 +3,9 @@
 // ============================================
 
 // 🔧 SUBSTITUA ESTAS VARIÁVEIS PELAS SUAS CREDENCIAIS DO SUPABASE
-const SUPABASE_URL = 'https://SEU_PROJECT_ID.supabase.co';
-const SUPABASE_ANON_KEY = 'SUA_ANON_KEY_AQUI';
+const SUPABASE_URL = 'https://smartinfosys.supabase.co';
+const 
+ = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5d2NxZGpscmVxYWF3YXNvcXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ1NTEwMjIsImV4cCI6MjA3MDEyNzAyMn0.DShW5_4bqwQ0YaakWHtiqt1RnNoezUYKeVChjRxD4ng';
 
 // Verificar se as credenciais foram configuradas
 const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('SEU_PROJECT_ID') && !SUPABASE_ANON_KEY.includes('SUA_ANON_KEY');
