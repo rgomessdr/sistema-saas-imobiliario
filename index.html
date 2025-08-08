@@ -1,162 +1,163 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-  <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartImóveis - Dashboard Moderno</title>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-          sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      
-      .loading {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: #f9fafb;
-      }
-      
-      .spinner {
-        border: 4px solid #f3f4f6;
-        border-top: 4px solid #3b82f6;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-      }
-      
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      
-      .error-message {
-        padding: 20px;
-        color: #d32f2f;
-        background: #ffebee;
-        border-radius: 4px;
-        margin: 20px;
-        border: 1px solid #ffcdd2;
-      }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #f9fafb;
+        }
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .error-message {
+            padding: 20px;
+            color: #d32f2f;
+            background: #ffebee;
+            border-radius: 8px;
+            margin: 20px;
+            border: 1px solid #ffcdd2;
+            max-width: 600px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            font-family: monospace;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="root">
-      <div class="loading">
-        <div class="spinner"></div>
-      </div>
+        <div class="loading">
+            <div class="spinner"></div>
+            <h2>Carregando SmartImóveis Dashboard...</h2>
+            <div id="status" class="status">Verificando dependências...</div>
+        </div>
     </div>
-    
+
     <script>
-      // Função para mostrar erro
-      function showError(message) {
-        document.getElementById('root').innerHTML = `
-          <div class="error-message">
-            <h3>Erro ao carregar o dashboard</h3>
-            <p><strong>Erro:</strong> ${message}</p>
-            <p>Verifique se todos os arquivos estão no diretório correto e tente recarregar a página.</p>
-          </div>
-        `;
-      }
-      
-      // Carregamento sequencial dos scripts
-      function loadScriptsSequentially() {
-        const scripts = [
-          'supabase-config.js',
-          'supabase-services.js',
-          'dashboard-supabase.js'
-        ];
+        let statusDiv = document.getElementById('status');
         
-        let loadedCount = 0;
+        function updateStatus(message) {
+            console.log(message);
+            statusDiv.textContent = message;
+        }
         
-        scripts.forEach((scriptName) => {
-          const script = document.createElement('script');
-          script.src = scriptName;
-          script.onload = () => {
-            console.log(`✅ ${scriptName} carregado`);
-            loadedCount++;
-            
-            if (loadedCount === scripts.length) {
-              console.log('✅ Todos os scripts carregados!');
-              initializeDashboard();
+        function showError(message) {
+            document.getElementById('root').innerHTML = `
+                <div class="loading">
+                    <div class="error-message">
+                        <h3>❌ Erro ao carregar o dashboard</h3>
+                        <p><strong>Erro:</strong> ${message}</p>
+                        <p>Verifique o console do navegador para mais detalhes.</p>
+                        <button onclick="location.reload()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;">Tentar Novamente</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = () => {
+                    updateStatus(`✅ ${src} carregado`);
+                    resolve();
+                };
+                script.onerror = (error) => {
+                    updateStatus(`❌ Erro ao carregar ${src}`);
+                    reject(new Error(`Falha ao carregar ${src}`));
+                };
+                document.head.appendChild(script);
+            });
+        }
+        
+        async function initializeApp() {
+            try {
+                // Verificar dependências externas
+                updateStatus('Verificando React...');
+                if (typeof React === 'undefined') {
+                    throw new Error('React não foi carregado');
+                }
+                
+                updateStatus('Verificando ReactDOM...');
+                if (typeof ReactDOM === 'undefined') {
+                    throw new Error('ReactDOM não foi carregado');
+                }
+                
+                updateStatus('Verificando Supabase...');
+                if (typeof supabase === 'undefined') {
+                    throw new Error('Supabase não foi carregado');
+                }
+                
+                updateStatus('✅ Dependências externas OK!');
+                
+                // Carregar scripts locais sequencialmente
+                updateStatus('Carregando supabase-config.js...');
+                await loadScript('supabase-config.js');
+                
+                updateStatus('Carregando supabase-services.js...');
+                await loadScript('supabase-services.js');
+                
+                updateStatus('Carregando dashboard-supabase.js...');
+                await loadScript('dashboard-supabase.js');
+                
+                // Aguardar um pouco para garantir que tudo foi processado
+                updateStatus('Aguardando inicialização...');
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Verificar se o componente está disponível
+                if (typeof window.DashboardSupabase !== 'function') {
+                    throw new Error('Componente DashboardSupabase não encontrado');
+                }
+                
+                updateStatus('✅ Renderizando dashboard...');
+                
+                // Renderizar o dashboard
+                const { createRoot } = ReactDOM;
+                const rootElement = document.getElementById('root');
+                const root = createRoot(rootElement);
+                
+                root.render(React.createElement(window.DashboardSupabase));
+                
+                updateStatus('✅ Dashboard carregado com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+                showError(error.message);
             }
-          };
-          script.onerror = (error) => {
-            console.error(`❌ Erro ao carregar ${scriptName}:`, error);
-            showError(`Erro ao carregar ${scriptName}`);
-          };
-          document.head.appendChild(script);
+        }
+        
+        // Aguardar carregamento da página
+        window.addEventListener('load', () => {
+            setTimeout(initializeApp, 500);
         });
-      }
-      
-      // Inicializar dashboard
-      function initializeDashboard() {
-        setTimeout(() => {
-          try {
-            // Verificar se todas as dependências estão carregadas
-            if (typeof React === 'undefined') {
-              throw new Error('React não foi carregado');
-            }
-            if (typeof ReactDOM === 'undefined') {
-              throw new Error('ReactDOM não foi carregado');
-            }
-            if (typeof supabase === 'undefined') {
-              throw new Error('Supabase não foi carregado');
-            }
-            if (typeof window.DashboardSupabase !== 'function') {
-              throw new Error('Componente DashboardSupabase não encontrado');
-            }
-            
-            console.log('✅ Inicializando dashboard...');
-            
-            // Renderizar o dashboard
-            const { createRoot } = ReactDOM;
-            const rootElement = document.getElementById('root');
-            const root = createRoot(rootElement);
-            
-            root.render(React.createElement(window.DashboardSupabase));
-            
-          } catch (error) {
-            console.error('Erro ao inicializar:', error);
-            showError(error.message);
-          }
-        }, 500);
-      }
-      
-      // Aguardar carregamento completo
-      window.addEventListener('load', function() {
-        setTimeout(() => {
-          try {
-            // Verificar dependências externas primeiro
-            if (typeof React === 'undefined') {
-              throw new Error('React não foi carregado');
-            }
-            if (typeof ReactDOM === 'undefined') {
-              throw new Error('ReactDOM não foi carregado');
-            }
-            if (typeof supabase === 'undefined') {
-              throw new Error('Supabase não foi carregado');
-            }
-            
-            console.log('✅ Dependências externas carregadas!');
-            loadScriptsSequentially();
-            
-          } catch (error) {
-            console.error('Erro ao verificar dependências:', error);
-            showError(error.message);
-          }
-        }, 1000);
-      });
     </script>
-  </body>
+</body>
 </html>
