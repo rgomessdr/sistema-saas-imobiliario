@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Debug - SmartImóveis</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="root" class="min-h-screen flex items-center justify-center">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold mb-4">Carregando Dashboard...</h1>
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('=== TESTE DEBUG ===');
+        console.log('React:', typeof React);
+        console.log('ReactDOM:', typeof ReactDOM);
+        console.log('Supabase:', typeof supabase);
+        
+        // Teste simples de carregamento
+        function testLoad() {
+            try {
+                if (typeof React === 'undefined') {
+                    throw new Error('React não carregado');
+                }
+                if (typeof ReactDOM === 'undefined') {
+                    throw new Error('ReactDOM não carregado');
+                }
+                if (typeof supabase === 'undefined') {
+                    throw new Error('Supabase não carregado');
+                }
+                
+                console.log('✅ Todas as dependências carregadas!');
+                
+                // Teste de carregamento dos scripts locais
+                const scripts = [
+                    'supabase-config.js',
+                    'supabase-services.js',
+                    'dashboard-supabase.js'
+                ];
+                
+                let loadedCount = 0;
+                
+                scripts.forEach((scriptName, index) => {
+                    const script = document.createElement('script');
+                    script.src = scriptName;
+                    script.onload = () => {
+                        console.log(`✅ ${scriptName} carregado`);
+                        loadedCount++;
+                        
+                        if (loadedCount === scripts.length) {
+                            console.log('✅ Todos os scripts carregados!');
+                            
+                            // Verificar se o componente está disponível
+                            setTimeout(() => {
+                                if (typeof window.DashboardSupabase === 'function') {
+                                    console.log('✅ Componente DashboardSupabase encontrado!');
+                                    
+                                    // Renderizar o componente
+                                    const { createRoot } = ReactDOM;
+                                    const rootElement = document.getElementById('root');
+                                    const root = createRoot(rootElement);
+                                    root.render(React.createElement(window.DashboardSupabase));
+                                } else {
+                                    console.error('❌ Componente DashboardSupabase não encontrado');
+                                    document.getElementById('root').innerHTML = '<div class="text-red-600 text-center"><h2>Erro: Componente não encontrado</h2></div>';
+                                }
+                            }, 500);
+                        }
+                    };
+                    script.onerror = (error) => {
+                        console.error(`❌ Erro ao carregar ${scriptName}:`, error);
+                        document.getElementById('root').innerHTML = `<div class="text-red-600 text-center"><h2>Erro ao carregar ${scriptName}</h2></div>`;
+                    };
+                    document.head.appendChild(script);
+                });
+                
+            } catch (error) {
+                console.error('❌ Erro:', error);
+                document.getElementById('root').innerHTML = `<div class="text-red-600 text-center"><h2>Erro: ${error.message}</h2></div>`;
+            }
+        }
+        
+        // Aguardar carregamento completo
+        window.addEventListener('load', () => {
+            setTimeout(testLoad, 1000);
+        });
+    </script>
+</body>
+</html>
