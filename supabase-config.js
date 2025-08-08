@@ -42,6 +42,11 @@ if (SUPABASE_CONFIGURED) {
     };
 }
 
+// Função para obter o cliente Supabase
+function getSupabaseClient() {
+    return supabaseClient;
+}
+
 // ============================================
 // FUNÇÕES DE BANCO DE DADOS
 // ============================================
