@@ -47,6 +47,11 @@ function getSupabaseClient() {
     return supabaseClient;
 }
 
+// Função para inicializar Supabase (compatibilidade)
+function initSupabase() {
+    return getSupabaseClient();
+}
+
 // ============================================
 // FUNÇÕES DE BANCO DE DADOS
 // ============================================
