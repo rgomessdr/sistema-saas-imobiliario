@@ -57,11 +57,6 @@
       </div>
     </div>
     
-    <!-- Scripts locais -->
-    <script src="supabase-config.js"></script>
-    <script src="supabase-services.js"></script>
-    <script src="dashboard-supabase.js"></script>
-    
     <script>
       // Função para mostrar erro
       function showError(message) {
@@ -74,9 +69,39 @@
         `;
       }
       
-      // Aguardar carregamento completo
-      window.addEventListener('load', function() {
-        setTimeout(function() {
+      // Carregamento sequencial dos scripts
+      function loadScriptsSequentially() {
+        const scripts = [
+          'supabase-config.js',
+          'supabase-services.js',
+          'dashboard-supabase.js'
+        ];
+        
+        let loadedCount = 0;
+        
+        scripts.forEach((scriptName) => {
+          const script = document.createElement('script');
+          script.src = scriptName;
+          script.onload = () => {
+            console.log(`✅ ${scriptName} carregado`);
+            loadedCount++;
+            
+            if (loadedCount === scripts.length) {
+              console.log('✅ Todos os scripts carregados!');
+              initializeDashboard();
+            }
+          };
+          script.onerror = (error) => {
+            console.error(`❌ Erro ao carregar ${scriptName}:`, error);
+            showError(`Erro ao carregar ${scriptName}`);
+          };
+          document.head.appendChild(script);
+        });
+      }
+      
+      // Inicializar dashboard
+      function initializeDashboard() {
+        setTimeout(() => {
           try {
             // Verificar se todas as dependências estão carregadas
             if (typeof React === 'undefined') {
@@ -92,6 +117,8 @@
               throw new Error('Componente DashboardSupabase não encontrado');
             }
             
+            console.log('✅ Inicializando dashboard...');
+            
             // Renderizar o dashboard
             const { createRoot } = ReactDOM;
             const rootElement = document.getElementById('root');
@@ -103,7 +130,32 @@
             console.error('Erro ao inicializar:', error);
             showError(error.message);
           }
-        }, 1000); // Aguardar 1 segundo para garantir carregamento
+        }, 500);
+      }
+      
+      // Aguardar carregamento completo
+      window.addEventListener('load', function() {
+        setTimeout(() => {
+          try {
+            // Verificar dependências externas primeiro
+            if (typeof React === 'undefined') {
+              throw new Error('React não foi carregado');
+            }
+            if (typeof ReactDOM === 'undefined') {
+              throw new Error('ReactDOM não foi carregado');
+            }
+            if (typeof supabase === 'undefined') {
+              throw new Error('Supabase não foi carregado');
+            }
+            
+            console.log('✅ Dependências externas carregadas!');
+            loadScriptsSequentially();
+            
+          } catch (error) {
+            console.error('Erro ao verificar dependências:', error);
+            showError(error.message);
+          }
+        }, 1000);
       });
     </script>
   </body>
