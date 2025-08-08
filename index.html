@@ -57,18 +57,12 @@
       </div>
     </div>
     
+    <!-- Scripts locais -->
+    <script src="supabase-config.js"></script>
+    <script src="supabase-services.js"></script>
+    <script src="dashboard-supabase.js"></script>
+    
     <script>
-      // Função para carregar scripts sequencialmente
-      function loadScript(src) {
-        return new Promise((resolve, reject) => {
-          const script = document.createElement('script');
-          script.src = src;
-          script.onload = resolve;
-          script.onerror = reject;
-          document.head.appendChild(script);
-        });
-      }
-      
       // Função para mostrar erro
       function showError(message) {
         document.getElementById('root').innerHTML = `
@@ -80,50 +74,37 @@
         `;
       }
       
-      // Inicializar aplicação
-      async function initApp() {
-        try {
-          // Aguardar carregamento das bibliotecas externas
-          await new Promise(resolve => {
-            if (window.React && window.ReactDOM && window.supabase) {
-              resolve();
-            } else {
-              setTimeout(resolve, 1000);
+      // Aguardar carregamento completo
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          try {
+            // Verificar se todas as dependências estão carregadas
+            if (typeof React === 'undefined') {
+              throw new Error('React não foi carregado');
             }
-          });
-          
-          // Carregar scripts locais
-          await loadScript('supabase-config.js');
-          await loadScript('supabase-services.js');
-          await loadScript('dashboard-supabase.js');
-          
-          // Aguardar um pouco para garantir que tudo foi carregado
-          await new Promise(resolve => setTimeout(resolve, 500));
-          
-          // Verificar se o componente está disponível
-          if (typeof window.DashboardSupabase === 'function') {
+            if (typeof ReactDOM === 'undefined') {
+              throw new Error('ReactDOM não foi carregado');
+            }
+            if (typeof supabase === 'undefined') {
+              throw new Error('Supabase não foi carregado');
+            }
+            if (typeof window.DashboardSupabase !== 'function') {
+              throw new Error('Componente DashboardSupabase não encontrado');
+            }
+            
+            // Renderizar o dashboard
             const { createRoot } = ReactDOM;
             const rootElement = document.getElementById('root');
             const root = createRoot(rootElement);
             
-            // Renderizar o dashboard
             root.render(React.createElement(window.DashboardSupabase));
-          } else {
-            throw new Error('Componente DashboardSupabase não encontrado');
+            
+          } catch (error) {
+            console.error('Erro ao inicializar:', error);
+            showError(error.message);
           }
-          
-        } catch (error) {
-          console.error('Erro ao inicializar:', error);
-          showError(error.message);
-        }
-      }
-      
-      // Iniciar quando a página carregar
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initApp);
-      } else {
-        initApp();
-      }
+        }, 1000); // Aguardar 1 segundo para garantir carregamento
+      });
     </script>
   </body>
 </html>
