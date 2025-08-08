@@ -7,7 +7,7 @@ const SUPABASE_URL = 'https://smartinfosys.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5d2NxZGpscmVxYWF3YXNvcXF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY5NjU1NzcsImV4cCI6MjA1MjU0MTU3N30.Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8Ej8';
 
 // Verificar se as credenciais foram configuradas
-const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('SEU_PROJECT_ID') && !SUPABASE_ANON_KEY.includes('SUA_ANON_KEY');
+const SUPABASE_CONFIGURED = !SUPABASE_URL.includes('SEU_PROJECT_ID') && !SUPABASE_ANON_KEY.includes('SUA_ANON_KEY_AQUI');
 
 if (!SUPABASE_CONFIGURED) {
     console.warn('⚠️ MODO DEMO: Usando dados simulados. Configure suas credenciais do Supabase para usar dados reais.');
